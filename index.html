@@ -26,6 +26,20 @@ body{
 }
 /* floating background sparkles */
 .sparkle{position:fixed; pointer-events:none; z-index:0; opacity:.55; animation:twinkle 4.5s ease-in-out infinite;}
+/* ---------- PUSHING P watermark ---------- */
+.pp-watermark{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+.pp-tilt{position:absolute; inset:-25%; transform:rotate(-20deg);}
+.pp-row{position:absolute; left:0; width:max-content; white-space:nowrap;
+  font-weight:900; font-size:clamp(54px,8.5vw,104px); letter-spacing:.08em; line-height:1.5;
+  color:transparent; -webkit-text-stroke:2px rgba(122,98,140,.13);
+  animation:ppdrift linear infinite;}
+@keyframes ppdrift{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.cover-card,.text-page{background:rgba(255,255,255,.86);}
+@media (max-width:760px){
+  .pp-row{font-size:46px; -webkit-text-stroke-width:1.5px;}
+  .pp-row.hide-m{display:none;}
+}
+@media (prefers-reduced-motion: reduce){.pp-row{animation:none;}}
 @keyframes twinkle{0%,100%{transform:scale(.7) rotate(0deg); opacity:.3;}50%{transform:scale(1.15) rotate(20deg); opacity:.7;}}
 @media (prefers-reduced-motion: reduce){.sparkle{animation:none;} .page{animation:none !important;} .art img{animation:none !important;}}
 
@@ -193,6 +207,8 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
 <div class="sparkle" style="top:64%; left:5%; font-size:16px; animation-delay:2.1s;">✦</div>
 <div class="sparkle" style="top:78%; right:7%; font-size:24px; animation-delay:.6s;">✦</div>
 <div class="sparkle" style="top:42%; left:48%; font-size:14px; animation-delay:3s;">✦</div>
+
+<div class="pp-watermark" id="ppwm" aria-hidden="true"></div>
 
 <div id="stage">
   <!-- COVER -->
@@ -382,7 +398,7 @@ ENTRIES.forEach((e,i)=>{
   const sec=document.createElement('section');
   sec.className='page'; sec.dataset.page='letter-'+e.l.toLowerCase();
   sec.innerHTML=
-   '<div class="spread" style="border-top:8px solid '+pastel+'; background:linear-gradient(150deg,'+BGC[e.l.toLowerCase()][0]+','+BGC[e.l.toLowerCase()][1]+')">'+
+   '<div class="spread" style="border-top:8px solid '+pastel+'; background:linear-gradient(150deg,'+hexA(BGC[e.l.toLowerCase()][0],.78)+','+hexA(BGC[e.l.toLowerCase()][1],.78)+')">'+
     '<div class="art" style="background:linear-gradient(140deg,'+pastel+'55,#ffffff 75%)">'+
      '<div class="letter-watermark">'+e.l+'</div>'+
      '<img src="'+IMG[e.l.toLowerCase()]+'" alt="'+e.term+' illustration" loading="lazy">'+
@@ -431,6 +447,31 @@ const GROUPS=[
     gal.appendChild(f);
   });
 })();
+
+/* PUSHING P watermark rows */
+(function(){
+  const wm=document.getElementById('ppwm'); if(!wm)return;
+  const tilt=document.createElement('div'); tilt.className='pp-tilt';
+  const rows=[
+    {top:'2%',  dur:95,  rev:false, hideM:false},
+    {top:'22%', dur:135, rev:true,  hideM:false},
+    {top:'42%', dur:110, rev:false, hideM:false},
+    {top:'62%', dur:150, rev:true,  hideM:true},
+    {top:'82%', dur:85,  rev:false, hideM:true},
+  ];
+  const bit='PUSHING P COMMUNITY&nbsp;&nbsp;·&nbsp;&nbsp;';
+  rows.forEach(r=>{
+    const d=document.createElement('div');
+    d.className='pp-row'+(r.hideM?' hide-m':'');
+    d.style.top=r.top;
+    d.style.animationDuration=r.dur+'s';
+    if(r.rev)d.style.animationDirection='reverse';
+    d.innerHTML='<span>'+bit.repeat(8)+'</span>';
+    tilt.appendChild(d);
+  });
+  wm.appendChild(tilt);
+})();
+function hexA(h,a){const n=parseInt(h.slice(1),16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
 
 /* navigation */
 const pages=[...document.querySelectorAll('.page')];

@@ -222,13 +222,7 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
       <p class="cover-meta">26 letters · 20 peptides · 6 science pages<br>Simple & scientific · Honestly labeled</p>
     </div>
     <p class="hint">Tip: use the ← → arrow keys, swipe, or the A–Z strip below to turn pages.</p>
-  </section>
-
-  <!-- INTRO -->
-  <section class="page" data-page="intro">
-    <div class="text-page">
-      <div class="fine"><strong>A friendly note:</strong> This book is for learning and curiosity — it's not medical advice, and it doesn't recommend using anything. Peptides marked “investigational” or “animal studies” are not proven safe or effective for people. Always talk to a qualified clinician about health decisions.</div>
-    </div>
+    <div class="fine" style="max-width:640px; margin:14px auto 0; text-align:left;"><strong>A friendly note:</strong> This book is for learning and curiosity — it's not medical advice, and it doesn't recommend using anything. Peptides marked “investigational” or “animal studies” are not proven safe or effective for people. Always talk to a qualified clinician about health decisions.</div>
   </section>
 
   <!-- LETTER PAGES get injected here -->
@@ -482,7 +476,7 @@ ENTRIES.forEach((e,i)=>{
   const b=document.createElement('button');
   b.className='azbtn'; b.textContent=e.l; b.title=e.term;
   b.setAttribute('aria-label','Go to letter '+e.l+': '+e.term);
-  b.onclick=()=>go(2+i);
+  b.onclick=()=>go(1+i);
   strip.appendChild(b);
 });
 const azbtns=[...strip.children];

@@ -182,7 +182,7 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
   .mp-btn:hover, .mp-collapse:hover{transform:none;}
 }
 
-/* ---------- evidence-guide confetti (one-shot celebration) ---------- */
+/* ---------- closing-page confetti (one-shot celebration) ---------- */
 #confetti{position:fixed; inset:0; width:100vw; height:100vh; z-index:60; pointer-events:none;
   opacity:0; transition:opacity .6s ease;}
 #confetti.on{opacity:1;}
@@ -440,9 +440,9 @@ const ENTRIES=[
 {l:'N',term:'NAD+',tag:'The cellular battery',badge:'Not a peptide — a coenzyme',bc:'bonus',
  kids:'NAD+ isn\u2019t a peptide at all — it\u2019s a tiny battery inside every cell that helps turn food into energy, and our batteries run a little lower as we age. It\u2019s in this book so you learn the difference between peptides and their battery friends.',
  science:'NAD+ is a coenzyme central to redox metabolism, declining with age. Human research focuses on precursors (nicotinamide riboside, NMN) rather than NAD+ itself, with mixed evidence for functional outcomes. Its popularity in longevity circles outpaces the data.'},
-{l:'O',term:'Oxytocin',tag:'The bonding hormone',badge:'Approved for labor',bc:'approved',
+{l:'O',term:'Oxytocin',tag:'The bonding hormone',badge:'FDA-Approved',bc:'approved',
  kids:'Oxytocin is the brain\u2019s hug hormone — 9 blocks that help during childbirth and make us feel warm and bonded, like a cozy blanket knitted from protein.',
- science:'Oxytocin is a 9-residue hypothalamic neuropeptide, an approved labor-induction drug (Pitocin) for decades. Intranasal “social cognition” claims from small early studies largely failed to replicate in larger trials — a textbook case of hype versus evidence.'},
+ science:'Oxytocin is a 9-residue hypothalamic neuropeptide, an FDA-approved labor-induction drug (Pitocin) for decades. Intranasal “social cognition” claims from small early studies largely failed to replicate in larger trials — a textbook case of hype versus evidence.'},
 {l:'P',term:'PT-141',tag:'The libido peptide',badge:'FDA-approved',bc:'approved',
  kids:'PT-141 started as a surprise side effect of a tanning peptide — scientists noticed it sparked fluttery feelings, followed the clue like detectives, and turned it into a real approved medicine. A detective story with a happy ending!',
  science:'Bremelanotide (PT-141) is a melanocortin-4 receptor agonist that grew out of melanotan research. FDA-approved in 2019 (Vyleesi) for hypoactive sexual desire disorder. It acts centrally rather than via blood flow; nausea is common; prescription-only.'},
@@ -764,13 +764,12 @@ function pzAssemble(art,key,mul){
   paintPlay();paintVol();
 })();
 
-/* ---------- evidence-guide confetti (one-shot celebration) ---------- */
+/* ---------- closing-page confetti (one-shot celebration) ---------- */
 (function(){
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const canvas=document.getElementById('confetti');
   const toast=document.getElementById('madetoast');
-  const target=document.querySelector('section[data-page="evidence"] .fine');
-  if(!canvas||!toast||!target||!canvas.getContext)return;
+  if(!canvas||!toast||!canvas.getContext)return;
   const ctx=canvas.getContext('2d');
   const COLORS=['#FF8FAB','#FFB26B','#E9C46A','#7BDDB4','#7FBFE8','#B79CED','#F4A7C3'];
   const DUR=4000,N=45;
@@ -821,12 +820,8 @@ function pzAssemble(art,key,mul){
     }
     requestAnimationFrame(frame);
   }
-  const io=new IntersectionObserver((ents)=>{
-    if(fired)return;
-    const e=ents[0];
-    if(e.isIntersecting&&e.intersectionRatio>=0.35){fired=true;io.disconnect();burst();}
-  },{threshold:0.35});
-  io.observe(target);
+  function tryFire(){ if(fired)return; fired=true; burst(); }
+  window.__confettiFire=tryFire; /* go() calls this on landing the closing page */
 })();
 
 /* PUSHING P watermark rows */
@@ -887,6 +882,7 @@ function go(n){
   const ap=pages[cur];
   if(ap.dataset.page.indexOf('letter-')===0){const a=ap.querySelector('.art');if(a)pzAssemble(a,ap.dataset.page,1);}
   else if(ap.dataset.page.indexOf('extra-')===0){ap.querySelectorAll('.extra-art').forEach((a,ti)=>pzAssemble(a,ap.dataset.page+':'+ti,1.15));}
+  if(ap.dataset.page==='closing'&&window.__confettiFire)window.__confettiFire();
   document.getElementById('progress').textContent=(cur+1)+' / '+TOTAL;
   document.getElementById('prevbtn').disabled=cur===0;
   document.getElementById('nextbtn').disabled=cur===TOTAL-1;

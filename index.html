@@ -1080,5 +1080,16 @@ document.addEventListener('keydown',e=>{
 })();
 </script>
 
+
+<script>
+/* the soundtrack play/pause button also plays the page-turn click sound */
+(function(){
+  var btn=document.getElementById('mp-play');
+  if(!btn)return;
+  btn.addEventListener('click',function(){
+    if(typeof pageClick==='function')pageClick();
+  });
+})();
+</script>
 </body>
 </html>

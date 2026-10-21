@@ -4,6 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>The ABCs of Peptides — An Illustrated Book</title>
+<script>(function(){try{var t=localStorage.getItem('abcs-theme');if(t!=='dark'&&t!=='light')t='light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<style>html[data-theme="dark"]{background:#171221;}
+/* ---------- Light/Dark theme toggle ---------- */
+.theme-toggle{position:fixed; top:12px; right:14px; z-index:60; display:flex; align-items:center; gap:8px;
+  padding:5px 6px 5px 12px; border-radius:999px; border:1px solid var(--line); background:var(--paper2);
+  box-shadow:0 8px 20px -10px rgba(120,90,140,.45); cursor:pointer; font:inherit;
+  transition:transform .15s ease, background .25s ease;}
+.theme-toggle:hover{transform:scale(1.05);}
+.theme-toggle:focus-visible{outline:3px solid var(--sky); outline-offset:2px;}
+.tt-label{font-size:12.5px; font-weight:800; letter-spacing:.03em; color:var(--ink-soft); min-width:32px; text-align:right;}
+.tt-track{position:relative; flex:none; width:52px; height:28px; border-radius:999px; background:#EFE3CE;
+  box-shadow:inset 0 1px 4px rgba(120,90,140,.30); transition:background .25s ease;}
+.tt-knob{position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%;
+  background:linear-gradient(135deg,var(--pink),var(--peach));
+  display:flex; align-items:center; justify-content:center; font-size:11px; line-height:1;
+  box-shadow:0 2px 6px rgba(120,90,140,.35); transition:transform .25s ease;}
+html[data-theme="light"] .tt-knob{transform:translateX(24px);}
+html[data-theme="dark"] .tt-track{background:#3D3157;}
+@media (prefers-reduced-motion: reduce){.tt-knob,.theme-toggle{transition:none;}}
+
+/* ---------- Dark theme ---------- */
+html[data-theme="dark"]{
+  --paper:#171221; --paper2:#1F1930; --ink:#F4EDFB; --ink-soft:#BCAFD4;
+  --card:#251D38; --line:#3D3157;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.65);
+  color-scheme:dark;
+}
+html[data-theme="dark"] body{
+  background:
+    radial-gradient(1100px 500px at 12% -8%, #40301C 0%, transparent 60%),
+    radial-gradient(900px 480px at 95% 12%, #372A5E 0%, transparent 55%),
+    radial-gradient(1000px 600px at 50% 115%, #17394D 0%, transparent 60%),
+    var(--paper);
+}
+html[data-theme="dark"] .cover-card,
+html[data-theme="dark"] .text-page{background:rgba(31,25,48,.88);}
+html[data-theme="dark"] #navbar{background:rgba(23,18,34,.92);}
+html[data-theme="dark"] .navbtn,
+html[data-theme="dark"] .mp-btn,
+html[data-theme="dark"] .mp-collapse,
+html[data-theme="dark"] .made-toast{background:var(--card);}
+html[data-theme="dark"] .mp-btn:hover{background:#342A4D;}
+html[data-theme="dark"] .mp-err{background:#3A2230; color:#F3B8C6; border-color:#5A3547;}
+html[data-theme="dark"] .spread{background:linear-gradient(150deg,#2A2140,#211A33)!important;}
+html[data-theme="dark"] .art{background:linear-gradient(140deg,#372C4F,#251D38)!important;}
+html[data-theme="dark"] .extra-topic{background:rgba(37,29,56,.60);}
+html[data-theme="dark"] .thanks{background:linear-gradient(140deg,#33270F,#2B2013);}
+html[data-theme="dark"] .evletter{background:var(--pink); color:#2A1E3F;}
+html[data-theme="dark"] .azbtn.now{background:var(--pink); color:#2A1E3F; border-color:var(--pink);}
+html[data-theme="dark"] .pp-row{-webkit-text-stroke-color:rgba(196,178,230,.27);}
+html[data-theme="dark"] .evthumb,
+html[data-theme="dark"] .extra-art img,
+html[data-theme="dark"] .gallery img{background:#2E2418;}
+</style>
 <style>
 :root{
   --paper:#FFF8EC; --paper2:#FFFDF7; --ink:#453A52; --ink-soft:#6E6380;
@@ -304,9 +358,23 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
   .evrow .badge{margin-left:0;}
   .text-page{padding:28px 22px;}
 }
+
+/* ---------- Ambient dots background ---------- */
+#dotsLayer{position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none;}
+#dotsLayer circle{transition:fill 1.4s ease;
+  animation:dotDrift var(--dur,14s) ease-in-out var(--adel,0s) infinite alternate,
+            dotTwinkle var(--tdur,5s) ease-in-out var(--tdel,0s) infinite alternate;}
+@keyframes dotDrift{from{transform:translate(0,0);}to{transform:translate(var(--dx,10px),var(--dy,8px));}}
+@keyframes dotTwinkle{from{opacity:var(--omin,.30);}to{opacity:var(--omax,.65);}}
+#dotsLayer.paused circle{animation-play-state:paused;}
+@media (prefers-reduced-motion: reduce){#dotsLayer circle{animation:none;}}
 </style>
 </head>
 <body>
+<button id="themeToggle" class="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode">
+  <span class="tt-label" id="ttLabel">Light</span>
+  <span class="tt-track"><span class="tt-knob" id="ttKnob">☀️</span></span>
+</button>
 <div class="sparkle" style="top:12%; left:8%; font-size:22px;">✦</div>
 <div class="sparkle" style="top:22%; right:10%; font-size:18px; animation-delay:1.2s;">✦</div>
 <div class="sparkle" style="top:64%; left:5%; font-size:16px; animation-delay:2.1s;">✦</div>
@@ -314,6 +382,7 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
 <div class="sparkle" style="top:42%; left:48%; font-size:14px; animation-delay:3s;">✦</div>
 
 <div class="pp-watermark" id="ppwm" aria-hidden="true"></div>
+<svg id="dotsLayer" aria-hidden="true" focusable="false" preserveAspectRatio="none"></svg>
 
 <div id="stage">
   <!-- COVER -->
@@ -970,6 +1039,100 @@ document.addEventListener('wheel',e=>{
   const h=(location.hash||'').replace('#','');
   const idx=pages.findIndex(p=>p.dataset.page===h);
   go(idx>=0?idx:0);
+})();
+</script>
+
+<script>
+(function(){
+  var btn=document.getElementById('themeToggle');
+  if(!btn)return;
+  var label=document.getElementById('ttLabel'), knob=document.getElementById('ttKnob');
+  function apply(t){
+    document.documentElement.setAttribute('data-theme',t);
+    var dark=t==='dark';
+    btn.setAttribute('aria-checked',dark?'true':'false');
+    label.textContent=dark?'Dark':'Light';
+    knob.textContent=dark?'\uD83C\uDF19':'\u2600\uFE0F';
+  }
+  apply(document.documentElement.getAttribute('data-theme')||'light');
+  btn.addEventListener('click',function(){
+    var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    apply(next);
+    try{localStorage.setItem('abcs-theme',next);}catch(e){}
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var svg=document.getElementById('dotsLayer');
+  if(!svg)return;
+  var NS='http://www.w3.org/2000/svg';
+  var N=180, dots=[], lastBand=-1, comboIdx=0;
+  var PAL={
+    light:['#D96C8C','#D98E45','#BE942F','#43A87E','#5494C6','#8F74D6'],
+    dark:['#FFA3BC','#FFC08A','#F2D38A','#97E8C6','#9ACFF2','#C9B3F5']
+  };
+  var COMBOS=[
+    [0,1,2,3,4,5,0,1,2,3,4,5],
+    [0,1,2,0,1,2,1,0,4],
+    [4,5,3,4,5,3,5,0],
+    [3,2,4,3,2,4,3,1],
+    [1,0,5,1,0,5,0,2]
+  ];
+  function theme(){return document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';}
+  function scatter(){
+    var w=window.innerWidth, h=window.innerHeight;
+    svg.setAttribute('viewBox','0 0 '+w+' '+h);
+    dots.forEach(function(d){
+      d.c.setAttribute('cx',(Math.random()*w).toFixed(1));
+      d.c.setAttribute('cy',(Math.random()*h).toFixed(1));
+    });
+  }
+  function recolor(){
+    var pal=PAL[theme()], combo=COMBOS[comboIdx%COMBOS.length];
+    dots.forEach(function(d,i){
+      d.c.setAttribute('fill',pal[combo[(i+d.off)%combo.length]]);
+    });
+  }
+  for(var i=0;i<N;i++){
+    var c=document.createElementNS(NS,'circle');
+    var r=(1.4+Math.random()*2.2).toFixed(2);
+    c.setAttribute('r',r);
+    var base=.30+Math.random()*.35;
+    var amp=.10+Math.random()*.18;
+    var ang=Math.random()*Math.PI*2, dist=6+Math.random()*20;
+    c.style.setProperty('--dx',(Math.cos(ang)*dist).toFixed(1)+'px');
+    c.style.setProperty('--dy',(Math.sin(ang)*dist).toFixed(1)+'px');
+    c.style.setProperty('--dur',(9+Math.random()*14).toFixed(1)+'s');
+    c.style.setProperty('--tdur',(3.5+Math.random()*5).toFixed(1)+'s');
+    c.style.setProperty('--adel',(-Math.random()*16).toFixed(1)+'s');
+    c.style.setProperty('--tdel',(-Math.random()*8).toFixed(1)+'s');
+    c.style.setProperty('--omin',Math.max(.08,base-amp).toFixed(2));
+    c.style.setProperty('--omax',Math.min(.85,base+amp).toFixed(2));
+    c.style.transitionDelay=(Math.random()*.9).toFixed(2)+'s';
+    c.setAttribute('opacity',base.toFixed(2));
+    svg.appendChild(c);
+    dots.push({c:c,off:Math.floor(Math.random()*12)});
+  }
+  scatter(); recolor();
+  var rzT; window.addEventListener('resize',function(){clearTimeout(rzT);rzT=setTimeout(scatter,250);});
+  document.addEventListener('visibilitychange',function(){
+    svg.classList.toggle('paused',document.hidden);
+  });
+  new MutationObserver(function(){recolor();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  function onNav(){
+    var el=document.getElementById('progress');
+    var p=el?parseInt(el.textContent,10)-1:0;
+    if(isNaN(p))p=0;
+    var band=Math.floor(p/4);
+    if(band!==lastBand){lastBand=band;comboIdx=band;recolor();}
+  }
+  if(typeof window.go==='function'){
+    var origGo=window.go;
+    window.go=function(){var r=origGo.apply(this,arguments);try{onNav();}catch(e){}return r;};
+    onNav();
+  }
 })();
 </script>
 </body>

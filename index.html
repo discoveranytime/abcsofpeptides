@@ -439,7 +439,7 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
     <button class="navbtn" id="prevbtn" aria-label="Previous page">←</button>
     <div id="azstrip" aria-label="Jump to a letter"></div>
     <button class="navbtn" id="nextbtn" aria-label="Next page">→</button>
-    <button class="navbtn" id="tocbtn" aria-label="Table of contents" style="font-size:17px;">☰</button>
+    
     <span id="progress">1 / 29</span>
   </div>
 </nav>
@@ -973,7 +973,6 @@ document.getElementById('prevbtn').onclick=()=>{pageClick();go(cur-1);};
 document.getElementById('nextbtn').onclick=()=>{pageClick();go(cur+1);};
 document.getElementById('openbook').onclick=()=>{pageClick();go(1);};
 document.getElementById('backtostart').onclick=()=>{pageClick();go(0);};
-document.getElementById('tocbtn').onclick=()=>{strip.scrollIntoView({behavior:'smooth',block:'nearest'}); strip.focus&&strip.focus();};
 document.addEventListener('keydown',e=>{
   if(e.target.matches&&e.target.matches('input[type=range]'))return; /* volume slider keeps arrow keys */
   if(e.key==='ArrowRight')go(cur+1);

@@ -39,7 +39,7 @@ html[data-theme="dark"] body{
     var(--paper);
 }
 html[data-theme="dark"] .cover-card,
-html[data-theme="dark"] .text-page{background:rgba(31,25,48,.88);}
+html[data-theme="dark"] .text-page{background:rgba(31,25,48,.82);}
 html[data-theme="dark"] #navbar{background:rgba(23,18,34,.92);}
 html[data-theme="dark"] .navbtn,
 html[data-theme="dark"] .mp-btn,
@@ -53,7 +53,7 @@ html[data-theme="dark"] .extra-topic{background:rgba(37,29,56,.60);}
 html[data-theme="dark"] .thanks{background:linear-gradient(140deg,#33270F,#2B2013);}
 html[data-theme="dark"] .evletter{background:var(--pink); color:#2A1E3F;}
 html[data-theme="dark"] .azbtn.now{background:var(--pink); color:#2A1E3F; border-color:var(--pink);}
-html[data-theme="dark"] .pp-row{-webkit-text-stroke-color:rgba(196,178,230,.27);}
+html[data-theme="dark"] .pp-row{-webkit-text-stroke-color:rgba(196,178,230,.38);}
 html[data-theme="dark"] .evthumb,
 html[data-theme="dark"] .extra-art img,
 html[data-theme="dark"] .gallery img{background:#2E2418;}
@@ -85,10 +85,10 @@ body{
 .pp-tilt{position:absolute; inset:-25%; transform:rotate(-20deg);}
 .pp-row{position:absolute; left:0; width:max-content; white-space:nowrap;
   font-weight:900; font-size:clamp(54px,8.5vw,104px); letter-spacing:.08em; line-height:1.5;
-  color:transparent; -webkit-text-stroke:2.5px rgba(122,98,140,.27);
+  color:transparent; -webkit-text-stroke:2.5px rgba(122,98,140,.38);
   animation:ppdrift linear infinite;}
 @keyframes ppdrift{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-.cover-card,.text-page{background:rgba(255,255,255,.86);}
+.cover-card,.text-page{background:rgba(255,255,255,.79);}
 @media (max-width:760px){
   .pp-row{font-size:46px; -webkit-text-stroke-width:2px;}
   .pp-row.hide-m{display:none;}
@@ -395,7 +395,7 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
       <button class="big-btn" id="openbook">Open the book →</button>
       <p class="cover-meta">26 letters · 20 peptides · 6 science pages<br>Simple & scientific · Honestly labeled</p>
     </div>
-    <p class="hint">Tip: use the ← → arrow keys, swipe, or the A–Z strip below to turn pages.</p>
+    <p class="hint">Tip: use the ← → arrow keys or the A–Z strip below to turn pages.</p>
     <div class="fine" style="max-width:640px; margin:14px auto 0; text-align:left;"><strong>A friendly note:</strong> This book is for learning and curiosity — it's not medical advice, and it doesn't recommend using anything. Peptides marked “investigational” or “animal studies” are not proven safe or effective for people. Always talk to a qualified clinician about health decisions.</div>
   </section>
 
@@ -589,7 +589,7 @@ ENTRIES.forEach((e,i)=>{
   const sec=document.createElement('section');
   sec.className='page'; sec.dataset.page='letter-'+e.l.toLowerCase();
   sec.innerHTML=
-   '<div class="spread" style="border-top:8px solid '+pastel+'; background:linear-gradient(150deg,'+hexA(BGC[e.l.toLowerCase()][0],.78)+','+hexA(BGC[e.l.toLowerCase()][1],.78)+')">'+
+   '<div class="spread" style="border-top:8px solid '+pastel+'; background:linear-gradient(150deg,'+hexA(BGC[e.l.toLowerCase()][0],.70)+','+hexA(BGC[e.l.toLowerCase()][1],.70)+')">'+
     '<div class="art" style="background:linear-gradient(140deg,'+pastel+'55,#ffffff 75%)">'+
      '<img src="'+IMG[e.l.toLowerCase()]+'" alt="'+e.term+' illustration" loading="lazy">'+
     '</div>'+
@@ -714,7 +714,7 @@ const XPASTELS=['#FF8FAB','#7FBFE8','#B79CED','#7BDDB4','#E9C46A','#F4A7C3','#9A
       '<span class="badge '+t.bc+'">'+t.badge+'</span><p class="desc">'+t.desc+'</p></div>';}).join('');
     const foot=n===total?'<div class="extra-foot"><button class="big-btn" id="backtostart2">← Back to the cover</button></div>':'';
     sec.innerHTML='<div class="spread extra" style="border-top:8px solid '+pastel+'; background:linear-gradient(150deg,'+
-      hexA(tint[0],.78)+','+hexA(tint[1],.78)+')"><div class="xscroll">'+head+
+      hexA(tint[0],.70)+','+hexA(tint[1],.70)+')"><div class="xscroll">'+head+
       '<div class="extra-grid">'+topics+'</div>'+foot+'</div></div>';
     host.appendChild(sec);
   }
@@ -978,61 +978,6 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight')go(cur+1);
   else if(e.key==='ArrowLeft')go(cur-1);
 });
-/* touch: swipe up/down (or left/right) turns pages.
-   On scrollable areas (page or inner copy panel) only navigate at the scroll boundary. */
-let swipe=null;
-function innerScroller(el){
-  let n=el;
-  while(n&&n!==document.body){
-    if(n.classList&&(n.classList.contains('copy')||n.classList.contains('xscroll'))&&n.scrollHeight-n.clientHeight>4)return n;
-    n=n.parentElement;
-  }
-  return null;
-}
-document.addEventListener('touchstart',e=>{
-  if(e.target.closest&&e.target.closest('#navbar,#mplayer')){swipe=null;return;}
-  const t=e.touches[0], doc=document.documentElement;
-  const inner=innerScroller(e.target);
-  swipe={x:t.clientX, y:t.clientY,
-    docScrollable:doc.scrollHeight-doc.clientHeight>4,
-    docTop:window.scrollY<=2, docBottom:window.scrollY+window.innerHeight>=doc.scrollHeight-2,
-    inner, innerTop:!inner||inner.scrollTop<=2,
-    innerBottom:!inner||inner.scrollTop+inner.clientHeight>=inner.scrollHeight-2};
-},{passive:true});
-document.addEventListener('touchend',e=>{
-  if(!swipe)return;
-  const dx=e.changedTouches[0].clientX-swipe.x, dy=e.changedTouches[0].clientY-swipe.y;
-  const s=swipe; swipe=null;
-  const adx=Math.abs(dx), ady=Math.abs(dy);
-  const vSwipe=ady>60&&ady>adx*1.15;
-  const hSwipe=!vSwipe&&adx>70&&adx>ady*1.15;
-  if(!vSwipe&&!hSwipe)return;
-  const forward=vSwipe?dy<0:dx<0;
-  if(vSwipe){
-    if(s.inner){
-      if(!((forward&&s.innerBottom)||(!forward&&s.innerTop)))return; /* let panel scroll */
-    }else if(s.docScrollable){
-      if(!((forward&&s.docBottom)||(!forward&&s.docTop)))return; /* let page scroll */
-    }
-  }
-  go(cur+(forward?1:-1));
-},{passive:true});
-/* desktop: mouse wheel turns pages when the page fits, or at the scroll boundary */
-let wheelLock=0;
-document.addEventListener('wheel',e=>{
-  if(e.target.closest&&e.target.closest('#navbar'))return;
-  if(e.ctrlKey||e.metaKey)return;
-  if(Math.abs(e.deltaY)<10||Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;
-  const now=Date.now(); if(now-wheelLock<900)return;
-  const doc=document.documentElement;
-  if(doc.scrollHeight-doc.clientHeight>4){
-    const atTop=window.scrollY<=2, atBottom=window.scrollY+window.innerHeight>=doc.scrollHeight-2;
-    const down=e.deltaY>0;
-    if(!((down&&atBottom)||(!down&&atTop)))return; /* let long pages scroll */
-  }
-  e.preventDefault(); wheelLock=now;
-  go(cur+(e.deltaY>0?1:-1));
-},{passive:false});
 /* deep-link */
 (function(){
   const h=(location.hash||'').replace('#','');
@@ -1134,5 +1079,6 @@ document.addEventListener('wheel',e=>{
   }
 })();
 </script>
+
 </body>
 </html>

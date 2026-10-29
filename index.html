@@ -213,6 +213,8 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
 .mp-slider::-moz-range-progress{height:5px; border-radius:3px; background:linear-gradient(90deg,var(--pink),var(--peach));}
 .mp-slider::-moz-range-thumb{width:9px; height:9px; border-radius:50%; background:#fff; border:2px solid var(--pink);}
 .mp-slider:focus-visible{outline:3px solid var(--sky); outline-offset:1px; border-radius:8px;}
+.mp-times{display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:var(--ink-soft); line-height:1; margin:1px 1px 0;}
+.mp-seek{margin-top:2px;}
 .mp-err{flex-basis:100%; margin:2px 0 0; font-size:11.5px; line-height:1.45; color:#A8445C;
   background:#FDEEF1; border:1.5px solid #F3C9D3; border-radius:10px; padding:6px 10px;}
 .mp-collapse{position:absolute; top:-10px; right:-6px; width:24px; height:24px; border-radius:50%;
@@ -455,10 +457,12 @@ details.deep p{margin:10px 0 4px; color:var(--ink);}
   </button>
   <div class="mp-body">
     <span class="mp-title" title="ABCs of Peptides Soundtrack">ABCs of Peptides Soundtrack</span>
+    <input id="mp-seek" class="mp-slider mp-seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek soundtrack">
+    <div class="mp-times" aria-hidden="true"><span id="mp-elapsed">0:00</span></div>
     <input id="mp-vol" class="mp-slider" type="range" min="0" max="100" value="50" step="1" aria-label="Volume">
   </div>
   <p class="mp-err" id="mp-err" hidden></p>
-  <audio id="mp-audio" preload="metadata" src="suika.mp3"></audio>
+  <audio id="mp-audio" preload="metadata" src="suika.mp3" loop></audio>
 </div>
 <audio id="mp-click" preload="auto" src="click.mp3"></audio>
 <canvas id="confetti" aria-hidden="true"></canvas>
@@ -804,14 +808,20 @@ function pzAssemble(art,key,mul){
   const audio=document.getElementById('mp-audio');
   const playBtn=document.getElementById('mp-play');
   const vol=document.getElementById('mp-vol');
+  const seek=document.getElementById('mp-seek');
+  const elapsedEl=document.getElementById('mp-elapsed');
+  let seeking=false;
   const errBox=document.getElementById('mp-err');
   const tile=document.getElementById('mplayer');
   const collapseBtn=document.getElementById('mp-collapse');
   const icPlay=playBtn.querySelector('.mp-ic-play'), icPause=playBtn.querySelector('.mp-ic-pause');
   audio.volume=0.5;
+  audio.loop=true;
   function paintPlay(){const playing=!audio.paused&&!audio.ended;icPlay.hidden=playing;icPause.hidden=!playing;
     playBtn.setAttribute('aria-label',playing?'Pause soundtrack':'Play soundtrack');}
   function paintVol(){vol.style.setProperty('--p',vol.value+'%');}
+  function fmt(t){if(!isFinite(t)||t<0)t=0;const m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+String(s).padStart(2,'0');}
+  function paintTimes(){const d=audio.duration||0,c=audio.currentTime||0;elapsedEl.textContent=fmt(c);if(!seeking&&isFinite(d)&&d>0){const pct=(c/d)*100;seek.value=pct;seek.style.setProperty('--p',pct+'%');}}
   function showErr(msg){errBox.hidden=false;errBox.textContent=msg;}
   playBtn.addEventListener('click',()=>{
     errBox.hidden=true;
@@ -819,16 +829,21 @@ function pzAssemble(art,key,mul){
     else audio.pause();
   });
   vol.addEventListener('input',()=>{audio.volume=vol.value/100;paintVol();});
+  seek.addEventListener('pointerdown',()=>{seeking=true;});
+  window.addEventListener('pointerup',()=>{seeking=false;});
+  seek.addEventListener('input',()=>{if(!isFinite(audio.duration)||audio.duration<=0)return;audio.currentTime=(seek.value/100)*audio.duration;seek.style.setProperty('--p',seek.value+'%');paintTimes();});
   audio.addEventListener('play',paintPlay);
   audio.addEventListener('pause',paintPlay);
-  audio.addEventListener('ended',()=>{audio.currentTime=0;paintPlay();});
   audio.addEventListener('error',()=>showErr('The soundtrack could not be loaded. It will play once suika.mp3 is next to this page.'));
+  audio.addEventListener('loadedmetadata',paintTimes);
+  audio.addEventListener('durationchange',paintTimes);
+  audio.addEventListener('timeupdate',paintTimes);
   function setCollapsed(c){tile.classList.toggle('collapsed',c);
     collapseBtn.setAttribute('aria-label',c?'Expand soundtrack player':'Collapse soundtrack player');
     collapseBtn.setAttribute('aria-expanded',String(!c));}
   collapseBtn.addEventListener('click',()=>setCollapsed(!tile.classList.contains('collapsed')));
   if(window.matchMedia&&window.matchMedia('(max-width: 480px)').matches)setCollapsed(true);
-  paintPlay();paintVol();
+  paintPlay();paintVol();paintTimes();
 })();
 
 /* ---------- closing-page confetti (one-shot celebration) ---------- */

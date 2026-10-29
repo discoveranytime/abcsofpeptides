@@ -986,8 +986,8 @@ document.getElementById('openbook').onclick=()=>{pageClick();go(1);};
 document.getElementById('backtostart').onclick=()=>{pageClick();go(0);};
 document.addEventListener('keydown',e=>{
   if(e.target.matches&&e.target.matches('input[type=range]'))return; /* volume slider keeps arrow keys */
-  if(e.key==='ArrowRight')go(cur+1);
-  else if(e.key==='ArrowLeft')go(cur-1);
+  if(e.key==='ArrowRight'){if(typeof pageClick==='function')pageClick();go(cur+1);}
+  else if(e.key==='ArrowLeft'){if(typeof pageClick==='function')pageClick();go(cur-1);}
 });
 /* deep-link */
 (function(){
